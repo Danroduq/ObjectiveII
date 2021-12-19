@@ -41,14 +41,14 @@ plot_ly(
                     zaxis =  list(title="Y")))
 
 # Contour Plot
-fig=plot_ly(x=~theta[,1],
-            y=~theta[,2],
-            z=~y, type="contour",
-            colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-fig%>%colorbar(title = "SD")%>%
-  layout(xaxis = list(title = TeX("\\psi_1")),
-         yaxis = list(title = TeX("\\psi_2"))) %>%
-         config(mathjax = 'cdn')
+# fig=plot_ly(x=~theta[,1],
+#             y=~theta[,2],
+#             z=~y, type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "SD")%>%
+#   layout(xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title = TeX("\\psi_2"))) %>%
+#          config(mathjax = 'cdn')
 ```
 
 

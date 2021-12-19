@@ -3,3 +3,10 @@ the-pool-of-tears
 a-caucus-race-and-a-long-tale
 simulation-ii
 value-function
+estimated-value-function
+sample-1000
+interpolating
+homoskedastic
+heteroskedastic
+simulation-ii-1
+n500

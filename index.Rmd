@@ -5,7 +5,6 @@ date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
 
-# Simulation II
 
 ```{r setup, include=FALSE}
 
@@ -31,7 +30,7 @@ source("Common_Functions.R")
 ```
 
 
-## Value Function
+# Value Function
 
 ```{r, echo=FALSE}
 set.seed(1)
@@ -87,9 +86,12 @@ fig%>%colorbar(title = "Value")%>%
       config(mathjax = 'cdn')
 
 ```
+
+# Homoskedastic Noise (n=1000)
+ 
 ## Estimated Value Function 
 
-```{r}
+```{r,echo=FALSE}
 set.seed(1)
 n=1000
 formula1="A1~-1+X1"
@@ -137,21 +139,19 @@ plot_ly(
                     yaxis = list(title="Psi_2"),
                     zaxis =  list(title="Y")))
 ## Contour Plot
-fig=plot_ly(x=~theta[,1],
-            y=~theta[,2],
-            z=~y, type="contour",
-            colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-fig%>%colorbar(title = "Value")%>%
-  layout(xaxis = list(title = TeX("\\psi_1")),
-         yaxis = list(title = TeX("\\psi_2"))) %>% 
-         config(mathjax = 'cdn')
+# fig=plot_ly(x=~theta[,1],
+#             y=~theta[,2],
+#             z=~y, type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout(xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title = TeX("\\psi_2"))) %>% 
+#          config(mathjax = 'cdn')
 ```
-##Homoskedastic Noise
 
-### Sample 1000
+## Interpolating
 
-#### Interpolating
-```{r}
+```{r,echo=FALSE}
  Noise_Type="Interpol"
   covtype=3
   prior=0
@@ -185,22 +185,22 @@ plot_ly(
 
 
 
-
-fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
-            y=~Final_Data$y[Final_Data$groupy==1],
-            z=~Final_Data$z[Final_Data$groupy==1], type="contour",
-            colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-fig%>%colorbar(title = "Value")%>%
-  layout(xaxis = list(title = TeX("\\psi_1")),
-         yaxis = list(title = TeX("\\psi_2"))) %>% 
-         config(mathjax = 'cdn') %>% 
-  add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
-            type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+# 
+# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+#             y=~Final_Data$y[Final_Data$groupy==1],
+#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout(xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title = TeX("\\psi_2"))) %>% 
+#          config(mathjax = 'cdn') %>% 
+#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
 ```
 
-### Homoskedastic
+## Homoskedastic
 
-```{r}
+```{r,echo=FALSE}
   Noise_Type="Homosk"
   type_simul=2
   covtype=3
@@ -233,21 +233,21 @@ plot_ly(
                     zaxis =  list(title="Y")))
 #--------------------------------------------------
 
-fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
-            y=~Final_Data$y[Final_Data$groupy==1],
-            z=~Final_Data$z[Final_Data$groupy==1], type="contour",
-            colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-fig%>%colorbar(title = "Value")%>%
-  layout(xaxis = list(title = TeX("\\psi_1")),
-         yaxis = list(title =TeX("\\psi_2"))) %>% 
-         config(mathjax = 'cdn') %>% 
-  add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
-            type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+#             y=~Final_Data$y[Final_Data$groupy==1],
+#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout(xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title =TeX("\\psi_2"))) %>% 
+#          config(mathjax = 'cdn') %>% 
+#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
 ```
 
-### Heteroskedastic
+## Heteroskedastic
 
-```{r}
+```{r,echo=FALSE}
   Noise_Type="Heterosk"
   type_simul=3
   covtype=3
@@ -294,7 +294,7 @@ plot_ly(
 ```
 
 
-```{r, eval=FALSE}
+```{r,echo=FALSE,eval=FALSE}
 #----- Reading in data
 pathy="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/"
 TabyVal_mean=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/TabyVal_mean_n1000.csv"),row.names=1)
@@ -321,7 +321,7 @@ xtable(Tabypsi2_median,caption=paste0("psi2 Median (IQR). Known value:",true_x[2
 ```
 
 
-```{r,fig.width = 10, fig.height = 5, eval=FALSE}
+```{r,fig.width = 10, fig.height = 5,echo=FALSE, eval=FALSE}
 true_x=c(1.8,-0.3)
 true_value=0.2414571
 

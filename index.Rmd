@@ -357,7 +357,7 @@ p3=ggplot(Valmat, aes(y=Value, x=Samp_numb, group=interaction(type_simul,Samp_nu
   scale_color_manual(name  ="Type",labels=c("Interpolating", "Homoskedastic","Heteroskedastic"),values=c("gray4", "gray50","gray70"))+
   geom_hline(yintercept=true_value, linetype="dashed")+
   theme(text = element_text(size = 20))+
-  labs(x ="Number of Additional Points", y = "Optimal Threshold")
+  labs(x ="Number of Additional Points", y = "Value at Optimum")
 jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationII_Figures/boxplotvalue_n1000_covtype3_homonoise.jpg", width = 1000, height = 500)
 p3
 dev.off()

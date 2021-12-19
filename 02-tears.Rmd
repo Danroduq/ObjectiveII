@@ -88,9 +88,8 @@ covtype=3
 prior=0
 n=500
 type_simul=1
-Base_Noise=""
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,".csv")
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Interpolating"
 theta=read.csv(paste0(pre,"/theta_",appendy))
 xhist=read.csv(paste0(pre,"/xhist_",appendy))
@@ -115,29 +114,28 @@ plot_ly(
                     zaxis =  list(title="Y")))
 
 
-fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
-            y=~Final_Data$y[Final_Data$groupy==1],
-            z=~Final_Data$z[Final_Data$groupy==1], type="contour",
-            colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-fig%>%colorbar(title = "Value")%>%
-  layout(xaxis = list(title = TeX("\\psi_1")),
-         yaxis = list(title = TeX("\\psi_2"))) %>%
-         config(mathjax = 'cdn') %>%
-  add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
-            type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+#             y=~Final_Data$y[Final_Data$groupy==1],
+#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout(xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title = TeX("\\psi_2"))) %>%
+#          config(mathjax = 'cdn') %>%
+#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
 ```
 
 
 ## Homoskedastic
 ```{r,echo=FALSE}
-  Noise_Type="Homosk"
-  type_simul=2
-  covtype=3
-  prior=0
-  n=500
-  Base_Noise=""
+Noise_Type="Homosk"
+type_simul=2
+covtype=3
+prior=0
+n=500
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,".csv")
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Homoskedastic"
 
 theta=read.csv(paste0(pre,"/theta_",appendy))
@@ -162,16 +160,16 @@ plot_ly(
                     yaxis = list(title="Psi_2"),
                     zaxis =  list(title="Y")))
 #--------------------------------------------------
-fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
-            y=~Final_Data$y[Final_Data$groupy==1],
-            z=~Final_Data$z[Final_Data$groupy==1], type="contour",
-            colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-fig%>%colorbar(title = "Value")%>%
-  layout(xaxis = list(title = TeX("\\psi_1")),
-         yaxis = list(title =TeX("\\psi_2"))) %>%
-         config(mathjax = 'cdn') %>%
-  add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
-            type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+#             y=~Final_Data$y[Final_Data$groupy==1],
+#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout(xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title =TeX("\\psi_2"))) %>%
+#          config(mathjax = 'cdn') %>%
+#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
 ```
 
 
@@ -179,14 +177,13 @@ fig%>%colorbar(title = "Value")%>%
 ## Heteroskedastic
 
 ```{r,echo=FALSE}
-  Noise_Type="Heterosk"
-  type_simul=3
-  covtype=3
-  prior=0
-  n=500
-Base_Noise=""
+Noise_Type="Heterosk"
+type_simul=3
+covtype=3
+prior=0
+n=500
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,".csv")
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Heteroskedastic"
 
 theta=read.csv(paste0(pre,"/theta_",appendy))
@@ -289,7 +286,7 @@ p3=ggplot(Valmat, aes(y=Value, x=Samp_numb, group=interaction(type_simul,Samp_nu
   scale_color_manual(name  ="Type",labels=c("Interpolating", "Homoskedastic","Heteroskedastic"),values=c("gray4", "gray50","gray70"))+
   geom_hline(yintercept=true_value, linetype="dashed")+
   theme(text = element_text(size = 20))+
-  labs(x ="Number of Additional Points", y = "Optimal Threshold")
+  labs(x ="Number of Additional Points", y = "Value at Optimum")
 jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationII_Figures/boxplotvalue_n500_covtype3_homonoise.jpg", width = 1000, height = 500)
 p3
 dev.off()

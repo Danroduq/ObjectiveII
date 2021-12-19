@@ -75,15 +75,15 @@ plot_ly(
          scene=list(xaxis = list(title="psi_2"),
                     yaxis = list(title="psi_1"),
                     zaxis =  list(title="Value")))
-
-fig=plot_ly(x=~theta[,1],
-            y=~theta[,2],
-            z=~Yp, type="contour",
-            colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-fig%>%colorbar(title = "Value")%>%
-  layout(xaxis = list(title =TeX("\\psi_1")),
-         yaxis = list(title = TeX("\\psi_2"))) %>%
-      config(mathjax = 'cdn')
+# 
+# fig=plot_ly(x=~theta[,1],
+#             y=~theta[,2],
+#             z=~Yp, type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout(xaxis = list(title =TeX("\\psi_1")),
+#          yaxis = list(title = TeX("\\psi_2"))) %>%
+#       config(mathjax = 'cdn')
 
 ```
 

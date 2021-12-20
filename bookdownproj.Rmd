@@ -1,3 +1,35 @@
+--- 
+title: "Objective II"
+author: "Daniel Rodriguez Duque"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+---
+
+# Value Function
+
+Placeholder
+
+
+## Estimated Value Function 
+## Interpolating
+## Homoskedastic
+## Heteroskedastic
+
+<!--chapter:end:index.Rmd-->
+
+
+# Homoskedastic Noise (n=500)
+
+Placeholder
+
+
+## Estimated Value Function
+## Interpolating
+## Homoskedastic
+## Heteroskedastic
+
+<!--chapter:end:02-tears.Rmd-->
+
 # Heteroskedastic Noise (n=1000)
 
 
@@ -279,12 +311,8 @@ appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul"
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Heteroskedastic"
 z25=read.csv(paste0(pre,"/z25_",appendy))
 
-plot_ly(x=~z25[,1], y =~z25[,2], z =~z25[,3], type="scatter3d", mode="markers")%>%
-  layout(title="Residuals",
-         scene=list(xaxis = list(title="Psi_1"),
-                    yaxis = list(title="Psi_2"),
-                    zaxis =  list(title="Residual")))
-
+fig <- plot_ly(x = ~theta[,1], y = ~theta[,2], z = ~z, type="scatter3d", mode="markers")
+fig
 ```
 
 
@@ -363,4 +391,7 @@ dev.off()
 
 
 
+
+
+<!--chapter:end:03-race.Rmd-->
 

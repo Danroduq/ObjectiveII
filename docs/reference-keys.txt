@@ -27,3 +27,4 @@ heteroskedastic-noise-n1000
 estimation-surface-1
 estimated-value-function-1
 estimated-value-function-2
+residuals

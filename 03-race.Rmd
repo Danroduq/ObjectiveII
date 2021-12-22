@@ -38,7 +38,7 @@ plot_ly(
   layout(title="Standard Deviation of Additive Noise",
          scene=list(xaxis = list(title="Psi_1"),
                     yaxis = list(title="Psi_2"),
-                    zaxis =  list(title="Y")))
+                    zaxis =  list(title="SD")))
 
 # Contour Plot
 # fig=plot_ly(x=~theta[,1],

@@ -16,8 +16,8 @@ library(reshape2)
 library(survey)
 library(knitr)
 
-setwd("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II")
-source("Common_Functions.R")
+# setwd("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II")
+source("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Common_Functions.R")
 
 formula1="A1~-1+X1"
 formula2="A2~-1+X2+A1"

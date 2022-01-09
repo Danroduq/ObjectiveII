@@ -28,3 +28,6 @@ estimation-surface-1
 estimated-value-function-1
 estimated-value-function-2
 residuals
+value-function-1
+estimated-value-function-3
+boxplots

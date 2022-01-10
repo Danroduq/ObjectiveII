@@ -243,9 +243,10 @@ kable(Tabypsi1_median,caption=paste0("psi1 Median (IQR). Known value:",true_x[1]
 kable(Tabypsi2_median,caption=paste0("psi2 Median (IQR). Known value:",true_x[2]))%>%kable_styling()
 
 
-xtable(TabyVal_median,caption=paste0("Value Median (IQR). Known value:",true_value))
 xtable(Tabypsi1_median,caption=paste0("psi1 Median (IQR). Known value:",true_x[1]))
 xtable(Tabypsi2_median,caption=paste0("psi2 Median (IQR). Known value:",true_x[2]))
+xtable(TabyVal_median,caption=paste0("Value Median (IQR). Known value:",true_value))
+
 ```
 
 

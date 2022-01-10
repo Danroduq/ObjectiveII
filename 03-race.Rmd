@@ -291,13 +291,13 @@ plot_ly(x=~z25[,1], y =~z25[,2], z =~z25[,3], type="scatter3d", mode="markers")%
 ```{r,echo=FALSE,eval=FALSE}
 #----- Reading in data
 pathy="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/"
-TabyVal_mean=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/TabyVal_mean_n1000_Base_NoiseHeterosk.csv"),row.names=1)
-Tabypsi1_mean=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi1_mean_n1000_Base_NoiseHeterosk.csv"),row.names=1)
-Tabypsi2_mean=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi2_mean_n1000_Base_NoiseHeterosk.csv"),row.names=1)
+TabyVal_mean=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/TabyVal_mean_n1000_HeteroskNoise.csv"),row.names=1)
+Tabypsi1_mean=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi1_mean_n1000_HeteroskNoise.csv"),row.names=1)
+Tabypsi2_mean=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi2_mean_n1000_HeteroskNoise.csv"),row.names=1)
 
-TabyVal_median=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/TabyVal_median_n1000_Base_NoiseHeterosk.csv"),row.names=1)
-Tabypsi1_median=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi1_median_n1000_Base_NoiseHeterosk.csv"),row.names=1)
-Tabypsi2_median=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi2_median_n1000_Base_NoiseHeterosk.csv"),row.names=1)
+TabyVal_median=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/TabyVal_median_n1000_HeteroskNoise.csv"),row.names=1)
+Tabypsi1_median=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi1_median_n1000_HeteroskNoise.csv"),row.names=1)
+Tabypsi2_median=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi2_median_n1000_HeteroskNoise.csv"),row.names=1)
 
 #kable
 kable(TabyVal_mean,caption=paste0("Value Mean (IQR). Known value:",true_value))%>%kable_styling()
@@ -309,9 +309,10 @@ kable(Tabypsi1_median,caption=paste0("psi1 Median (IQR). Known value:",true_x[1]
 kable(Tabypsi2_median,caption=paste0("psi2 Median (IQR). Known value:",true_x[2]))%>%kable_styling()
 
 
-xtable(TabyVal_median,caption=paste0("Value Median (IQR). Known value:",true_value))
 xtable(Tabypsi1_median,caption=paste0("psi1 Median (IQR). Known value:",true_x[1]))
 xtable(Tabypsi2_median,caption=paste0("psi2 Median (IQR). Known value:",true_x[2]))
+xtable(TabyVal_median,caption=paste0("Value Median (IQR). Known value:",true_value))
+
 ```
 
 
@@ -319,7 +320,7 @@ xtable(Tabypsi2_median,caption=paste0("psi2 Median (IQR). Known value:",true_x[2
 true_x=c(1.8,-0.3)
 true_value=0.2414571
 
-Valmat=read.csv(file="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/SimulationII_TablesFigures/Valmat_n1000Base_NoiseHeterosk.csv")
+Valmat=read.csv(file="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/SimulationII_TablesFigures/Valmat_n1000_HeteroskNoise.csv")
 
   keep=seq(1,25,2)
   Valmat=Valmat[Valmat$Samp_numb %in% keep,]

@@ -182,16 +182,14 @@ plot_ly(
                     zaxis =  list(title="Y")))
 
 
-
-# 
 # fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
 #             y=~Final_Data$y[Final_Data$groupy==1],
 #             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
 #             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
 # fig%>%colorbar(title = "Value")%>%
 #   layout(xaxis = list(title = TeX("\\psi_1")),
-#          yaxis = list(title = TeX("\\psi_2"))) %>% 
-#          config(mathjax = 'cdn') %>% 
+#          yaxis = list(title = TeX("\\psi_2"))) %>%
+#          config(mathjax = 'cdn') %>%
 #   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
 #             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
 ```
@@ -313,9 +311,10 @@ kable(Tabypsi1_median,caption=paste0("psi1 Median (IQR). Known value:",true_x[1]
 kable(Tabypsi2_median,caption=paste0("psi2 Median (IQR). Known value:",true_x[2]))%>%kable_styling()
 
 
-xtable(TabyVal_median,caption=paste0("Value Median (IQR). Known value:",true_value))
 xtable(Tabypsi1_median,caption=paste0("psi1 Median (IQR). Known value:",true_x[1]))
 xtable(Tabypsi2_median,caption=paste0("psi2 Median (IQR). Known value:",true_x[2]))
+xtable(TabyVal_median,caption=paste0("Value Median (IQR). Known value:",true_value))
+
 ```
 
 

@@ -1,5 +1,4 @@
-# Heteroskedastic Noise (n=1000)
-
+## Matern 3/2 (n=1000)
 
 ```{r setup, include=FALSE}
 library(gtools)
@@ -19,124 +18,25 @@ formula2="A2~-1+X2+A1"
 weight_estimate=TRUE
 normalized=TRUE
 bayes=FALSE
-covtype=3
+covtype=1
 ```
 
 
-## Estimated Value Function
-
-```{r,echo=FALSE}
-data_grid2=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/sd_heteroskedastic_pure.csv"))
-
-plot_matrix2 <- t(acast(data_grid2, theta1~ theta2, value.var="value"))
-
-plot_ly(
-  x = as.numeric(colnames(plot_matrix2)),
-  y = as.numeric(rownames(plot_matrix2)),
-  z = plot_matrix2) %>%
-  add_surface()%>%
-  layout(title="Standard Deviation of Additive Noise",
-         scene=list(xaxis = list(title="Psi_1"),
-                    yaxis = list(title="Psi_2"),
-                    zaxis =  list(title="SD")))
-
-# Contour Plot
-# fig=plot_ly(x=~theta[,1],
-#             y=~theta[,2],
-#             z=~y, type="contour",
-#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-# fig%>%colorbar(title = "SD")%>%
-#   layout(xaxis = list(title = TeX("\\psi_1")),
-#          yaxis = list(title = TeX("\\psi_2"))) %>%
-#          config(mathjax = 'cdn')
-```
-
-
-```{r, echo=FALSE}
-set.seed(1)
-n=1000
-formula1="A1~-1+X1"
-formula2="A2~-1+X2+A1"
-expit=function(x) 1 / (1 + exp(-x))
-fact=1.5
-X1=rnorm(n,0,1*fact)
-A1_Opt=(X1-1.0*fact)>0+0
-A1 = rbinom(n, 1, expit(-1/fact*X1))
-X2=1*fact*A1+rnorm(n,0,1*fact)
-A2_Opt=(X2-.5*fact)>0
-A2=rbinom(n, 1, expit(-1/fact*X2+1/fact*A1))
-rand_comp1_1=rnorm(n,0,0.45)
-rand_comp2_1=rnorm(n,0,0.05)
-
-rand_comp1_2=rnorm(n,0,0.45)
-rand_comp2_2=rnorm(n,0,0.05)
-
-Y=0.2*(X1 -(X1+1.5*fact)*(X1+1*fact)*(X1+0.2*fact)*(X1-1.2*fact)*(X1-.5*fact)*(A1_Opt-A1)-
-         (X2+1.4*fact)*(X2+1.1*fact)*(X2+0.2*fact)*(X2-1.4*fact)*(X2-0.9*fact)*(A2_Opt-A2))+
-          (1-A1)*rand_comp1_1 + (A1)*rand_comp2_1+(1-A2)*rand_comp1_2 + (A2)*rand_comp2_2
-  
-richi=t(rdirichlet(1, rep(1,n)))
-
-Datai=data.frame(X1,A1_Opt,A1,X2,A2_Opt,A2,Y)
-proba=compute_probas(formula1=formula1,
-                     formula2=formula2,
-                     Dati=Datai,bayes=bayes,dirichi=richi)
-
-
-sequence1=seq(-1.5,1.2,.05)*fact #this only comes in at the end
-sequence2=seq(-1.5,1.2,.05)*fact
-
-theta=as.matrix(expand.grid(sequence1,sequence2))
-design1=theta[,1]
-design2=theta[,2]
-y=apply(theta,1,FUN=checki_compliant2d,Dati=Datai,weight_estimate=weight_estimate, proba=proba, normalized=normalized,bayes=bayes,dirichi=richi)
-
-
-data_grid2=data.frame(theta1=theta[,1],
-                      theta2=theta[,2],
-                      value=y)
-plot_matrix2 <- t(acast(data_grid2, theta1~ theta2, value.var="value"))
-
-plot_ly(
-  x = as.numeric(colnames(plot_matrix2)),
-  y = as.numeric(rownames(plot_matrix2)),
-  z = plot_matrix2) %>%
-  add_surface()%>%
-  layout(title="Value of Regime for Varying Cutoffs \n IPW",
-         scene=list(xaxis = list(title="Psi_1"),
-                    yaxis = list(title="Psi_2"),
-                    zaxis =  list(title="Y")))
-# Contour Plot
-# fig=plot_ly(x=~theta[,1],
-#             y=~theta[,2],
-#             z=~y, type="contour",
-#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-# fig%>%colorbar(title = "Value")%>%
-#   layout(xaxis = list(title = TeX("\\psi_1")),
-#          yaxis = list(title = TeX("\\psi_2"))) %>%
-#          config(mathjax = 'cdn')
-```
-
-
-## Interpolating Model
-
+### Interpolating
 ```{r, echo=FALSE}
 Noise_Type="Interpol"
-covtype=3
+covtype=1
 prior=0
 n=1000
 type_simul=1
-Base_Noise="Heterosk"
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_NoiseHomosk.csv")
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Interpolating"
 theta=read.csv(paste0(pre,"/theta_",appendy))
 xhist=read.csv(paste0(pre,"/xhist_",appendy))
 yhist=read.csv(paste0(pre,"/yhist_",appendy))
 Final_Data=read.csv(paste0(pre,"/Final_Data_",appendy))
 coly=c("GP","IPW")
-
-
 
 
 data_grid2=data.frame(theta1=Final_Data$x[Final_Data$groupy==1],
@@ -154,8 +54,6 @@ plot_ly(
                     yaxis = list(title="Psi_2"),
                     zaxis =  list(title="Y")))
 
-
-
 # 
 # fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
 #             y=~Final_Data$y[Final_Data$groupy==1],
@@ -170,17 +68,15 @@ plot_ly(
 ```
 
 
-## Homoskedastic Model 
-
+### Homoskedastic
 ```{r,echo=FALSE}
-  Noise_Type="Homosk"
-  type_simul=2
-  covtype=3
-  prior=0
-  n=1000
-Base_Noise="Heterosk"
+Noise_Type="Homosk"
+type_simul=2
+covtype=1
+prior=0
+n=1000
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_NoiseHomosk.csv")
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Homoskedastic"
 
 theta=read.csv(paste0(pre,"/theta_",appendy))
@@ -188,8 +84,6 @@ xhist=read.csv(paste0(pre,"/xhist_",appendy))
 yhist=read.csv(paste0(pre,"/yhist_",appendy))
 Final_Data=read.csv(paste0(pre,"/Final_Data_",appendy))
 coly=c("GP","IPW")
-
-
 
 
 data_grid2=data.frame(theta1=Final_Data$x[Final_Data$groupy==1],
@@ -221,17 +115,16 @@ plot_ly(
 
 
 
-## Heteroskedastic Model
+### Heteroskedastic
 
 ```{r,echo=FALSE}
-  Noise_Type="Heterosk"
-  type_simul=3
-  covtype=3
-  prior=0
-  n=1000
-Base_Noise="Heterosk"
+Noise_Type="Heterosk"
+type_simul=3
+covtype=1
+prior=0
+n=1000
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_NoiseHomosk.csv")
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Heteroskedastic"
 
 theta=read.csv(paste0(pre,"/theta_",appendy))
@@ -256,8 +149,6 @@ plot_ly(
                     yaxis = list(title="Psi_2"),
                     zaxis =  list(title="Y")))
 
-
-
 #--------------------------------------------------------
 # fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
 #             y=~Final_Data$y[Final_Data$groupy==1],
@@ -272,58 +163,41 @@ plot_ly(
 
 ```
 
-
-## Residuals
-```{r, echo=FALSE}
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
-pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Heteroskedastic"
-z25=read.csv(paste0(pre,"/z25_",appendy))
-
-plot_ly(x=~z25[,1], y =~z25[,2], z =~z25[,3], type="scatter3d", mode="markers")%>%
-  layout(title="Residuals",
-         scene=list(xaxis = list(title="Psi_1"),
-                    yaxis = list(title="Psi_2"),
-                    zaxis =  list(title="Residual")))
-
-```
-
-
-```{r,echo=FALSE,eval=FALSE}
-#----- Reading in data
-pathy="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/"
-TabyVal_mean=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/TabyVal_mean_n1000_HeteroskNoise.csv"),row.names=1)
-Tabypsi1_mean=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi1_mean_n1000_HeteroskNoise.csv"),row.names=1)
-Tabypsi2_mean=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi2_mean_n1000_HeteroskNoise.csv"),row.names=1)
-
-TabyVal_median=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/TabyVal_median_n1000_HeteroskNoise.csv"),row.names=1)
-Tabypsi1_median=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi1_median_n1000_HeteroskNoise.csv"),row.names=1)
-Tabypsi2_median=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi2_median_n1000_HeteroskNoise.csv"),row.names=1)
-
-#kable
-kable(TabyVal_mean,caption=paste0("Value Mean (IQR). Known value:",true_value))%>%kable_styling()
-kable(Tabypsi1_mean,caption=paste0("psi1 Mean (IQR). Known value:",true_x[1]))%>%kable_styling()
-kable(Tabypsi2_mean,caption=paste0("psi2 Mean (IQR). Known value:",true_x[2]))%>%kable_styling()
-
-kable(TabyVal_median,caption=paste0("Value Median (IQR). Known value:",true_value))%>%kable_styling()
-kable(Tabypsi1_median,caption=paste0("psi1 Median (IQR). Known value:",true_x[1]))%>%kable_styling()
-kable(Tabypsi2_median,caption=paste0("psi2 Median (IQR). Known value:",true_x[2]))%>%kable_styling()
-
-
-xtable(Tabypsi1_median,caption=paste0("psi1 Median (IQR). Known value:",true_x[1]))
-xtable(Tabypsi2_median,caption=paste0("psi2 Median (IQR). Known value:",true_x[2]))
-xtable(TabyVal_median,caption=paste0("Value Median (IQR). Known value:",true_value))
-
-```
-
-
-```{r,fig.width=10,fig.height=5,echo=FALSE,eval=FALSE}
+```{r,eval=FALSE,echo=FALSE}
 true_x=c(1.8,-0.3)
 true_value=0.2414571
 
-Valmat=read.csv(file="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/SimulationII_TablesFigures/Valmat_n1000_HeteroskNoise.csv")
+#----- Reading in data
+pathy="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/"
+TabyVal_mean=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/TabyVal_mean_n1000_cov32.csv"),row.names=1)
+Tabypsi1_mean=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi1_mean_n1000_cov32.csv"),row.names=1)
+Tabypsi2_mean=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi2_mean_n1000_cov32.csv"),row.names=1)
 
-  keep=seq(1,25,2)
-  Valmat=Valmat[Valmat$Samp_numb %in% keep,]
+TabyVal_median=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/TabyVal_median_n1000_cov32.csv"),row.names=1)
+Tabypsi1_median=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi1_median_n1000_cov32.csv"),row.names=1)
+Tabypsi2_median=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/Tabypsi2_median_n1000_cov32.csv"),row.names=1)
+
+xtable(Tabypsi1_median,caption=paste0("psi1 Median (IQR). Known value:",true_x[1]),digits=c(3))
+xtable(Tabypsi2_median,caption=paste0("psi2 Median (IQR). Known value:",true_x[2]),digits=c(3))
+xtable(TabyVal_median,caption=paste0("Value Median (IQR). Known value:",true_value),digits=c(3))
+
+xtable(Tabypsi1_mean,caption=paste0("psi1 Mean (sd). Known value:",true_x[1]),digits=c(3))
+xtable(Tabypsi2_mean,caption=paste0("psi2 Mean (sd). Known value:",true_x[2]),digits=c(3))
+xtable(TabyVal_mean,caption=paste0("Value Mean (sd). Known value:",true_value),digits=c(3))
+
+```
+
+
+
+```{r,fig.width = 10, fig.height = 5,echo=FALSE,eval=FALSE}
+true_x=c(1.8,-0.3)
+true_value=0.2414571
+
+  
+Valmat=read.csv(file="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/SimulationII_TablesFigures/Valmat_n1000_cov32.csv")
+
+keep=seq(1,25,2)
+Valmat=Valmat[Valmat$Samp_numb %in% keep,]
 
 p1=ggplot(Valmat, aes(y=psi1, x=Samp_numb, group=interaction(type_simul,Samp_numb), col=as.factor(type_simul))) +  
   geom_boxplot(width=1.4,outlier.size = 0.6)+geom_point(position=position_dodge(width=1.4),size=0.6)+theme_bw()+
@@ -332,7 +206,7 @@ p1=ggplot(Valmat, aes(y=psi1, x=Samp_numb, group=interaction(type_simul,Samp_num
   theme(text = element_text(size = 20))+
   labs(x ="Number of Additional Points", y = "Optimal Threshold")
 
-jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationII_Figures/boxplotpsi1_n1000_covtype3_heterosknoise.jpg", width = 1000, height = 500)
+jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationII_Figures/boxplotpsi1_n1000_covtype1_homosknoise.jpg", width = 1000, height = 500)
 p1
 dev.off()
 
@@ -342,7 +216,7 @@ p2=ggplot(Valmat, aes(y=psi2, x=Samp_numb, group=interaction(type_simul,Samp_num
   geom_hline(yintercept=true_x[2], linetype="dashed")+
   theme(text = element_text(size = 20))+
   labs(x ="Number of Additional Points", y = "Optimal Threshold")
-jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationII_Figures/boxplotpsi2_n1000_covtype3_heterosknoise.jpg", width = 1000, height = 500)
+jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationII_Figures/boxplotpsi2_n1000_covtype1_homosknoise.jpg", width = 1000, height = 500)
 p2
 dev.off()
 
@@ -353,11 +227,10 @@ p3=ggplot(Valmat, aes(y=Value, x=Samp_numb, group=interaction(type_simul,Samp_nu
   geom_hline(yintercept=true_value, linetype="dashed")+
   theme(text = element_text(size = 20))+
   labs(x ="Number of Additional Points", y = "Value at Optimum")
-jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationII_Figures/boxplotvalue_n1000_covtype3_heterosknoise.jpg", width = 1000, height = 500)
+jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationII_Figures/boxplotvalue_n1000_covtype1_homosknoise.jpg", width = 1000, height = 500)
 p3
 dev.off()
 ```
-
 
 
 

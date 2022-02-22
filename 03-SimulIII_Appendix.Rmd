@@ -1,0 +1,829 @@
+# Simulation III Appendix
+
+```{r}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(gtools)
+library(xtable)
+library(ggplot2)
+library(plotly)#used for plotting
+library(kableExtra)
+library(reshape2)
+library(survey)
+library(knitr)
+pathy="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III"
+source(paste0(pathy,"/Common_Functions.R"))
+
+formula1="A1~-1+X12+X11"
+formula2="A2~-1+X22+X21+A1"
+formula3="A3~-1+X32+X31+A2"
+formula4="A4~-1+X42+X41+A3"
+# weight_estimate=TRUE
+normalized=TRUE
+bayes=FALSE
+covtype=3
+expit=function(x) 1 / (1 + exp(-x))
+
+```
+## Estimated Value Function 
+
+```{r}
+set.seed(1)
+n=1000
+vv=1
+XX=3*rbinom(n,1,0.5)
+rand_comp=rnorm(n, 0, 0.1)  # Random error in Y
+X11=rnorm(n,mean=1,sd=vv)
+X12=rnorm(n,sd=vv)
+A1=rbinom(n, 1, expit(.5*X12+1*X11))
+A1_Opt=((0.5*X11+0.5*X12+0.1*XX)>0.5)+0
+
+X21=rnorm(n,0+0.2*A1+0.1*X11,sd=vv)
+X22=rnorm(n,0+0.5*A1+0.1*X12,sd=vv)
+A2=rbinom(n, 1, expit(.5*X22-0.6*A1+ 1*X21))
+A2_Opt=((0.5*X21+0.5*X22+0.1*XX)>0.5)+0
+
+X31=rnorm(n,0+0.2*A2+0.1*X21,sd=vv)
+X32=rnorm(n,0+0.5*A2+0.1*X22,sd=vv)
+A3=rbinom(n, 1, expit(.5*X32-0.6*A2+ 1*X31))
+A3_Opt=((0.5*X31+0.5*X32+0.1*XX)>0.5)+0
+
+X41=rnorm(n,0+0.2*A3+0.1*X31,sd=vv)
+X42=rnorm(n,0+0.5*A3+0.1*X32,sd=vv)
+A4=rbinom(n, 1, expit(.5*X42-0.6*A3+ 1*X41))
+A4_Opt=((0.5*X41+0.5*X42+0.1*XX)>0.5)+0
+
+Y=X11+X12 - (0.5*X11+0.5*X12+0.1*XX-0.5)*(A1_Opt-A1) -
+  (0.5*X21+0.5*X22+0.1*XX-0.5)*(A2_Opt-A2)-
+  (0.5*X31+0.5*X32+0.1*XX-0.5)*(A3_Opt-A3)-
+  (0.5*X41+0.5*X42+0.1*XX-0.5)*(A4_Opt-A4)+rand_comp
+
+richi=t(rdirichlet(1, rep(1,n)))
+
+Datai=data.frame(XX,X11,X12,A1_Opt,A1,X21,X22,A2_Opt,A2,X31,X32,A3_Opt,A3,X41,X42,A4,A4_Opt,Y)
+proba=compute_probas(formula1=formula1,
+                     formula2=formula2,
+                     formula3=formula3,
+                     formula4=formula4,
+                     Dati=Datai,bayes=bayes,dirichi=richi)
+
+
+sequence1=seq(0.2,0.8,0.05)
+sequence2=1-sequence1
+sequence3=seq(-0.3,0.3,0.05)
+theta=as.matrix(expand.grid(sequence1,sequence3))
+
+
+design1=theta[,1]
+design2=theta[,2]
+y=apply(theta,1,FUN=checki_compliant2d,Dati=Datai, proba=proba, normalized=normalized,bayes=bayes,dirichi=richi)
+
+
+data_grid2=data.frame(theta1=theta[,1],
+                      theta2=theta[,2],
+                      value=y)
+plot_matrix2 <- t(acast(data_grid2, theta1~ theta2, value.var="value"))
+
+plot_ly(
+  x = as.numeric(colnames(plot_matrix2)),
+  y = as.numeric(rownames(plot_matrix2)),
+  z = plot_matrix2) %>%
+  add_surface()%>%
+  layout(title="Value of Regime for Varying Cutoffs \n IPW",
+         scene=list(xaxis = list(title="Psi_1"),
+                    yaxis = list(title="Psi_3"),
+                    zaxis =  list(title="Y")))
+## Contour Plot
+# fig=plot_ly(x=~theta[,1],
+#             y=~theta[,2],
+#             z=~y, type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout(title = "Value of Regime for Varying Cutoffs",
+#          xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title = TeX("\\psi_3")))%>%
+#          config(mathjax = 'cdn')
+```
+## Matern 5/2 (n=1000)
+
+### Interpolating
+```{r}
+  Noise_Type="Interpol"
+  covtype=3
+  prior=0
+  n=1000
+  type_simul=1
+  Base_Noise="Homosk"
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
+# theta=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Interpolating/theta_",appendy))
+xhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Interpolating/xhist_",appendy))
+yhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Interpolating/yhist_",appendy))
+Final_Data=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Interpolating/Final_Data_",appendy))
+coly=c("GP","IPW")
+
+data_grid2=data.frame(theta1=Final_Data$x[Final_Data$groupy==1],
+                      theta2=Final_Data$y[Final_Data$groupy==1],
+                      value=Final_Data$z[Final_Data$groupy==1])
+plot_matrix2 <- t(acast(data_grid2, theta1~ theta2, value.var="value"))
+
+plot_ly(
+  x = as.numeric(colnames(plot_matrix2)),
+  y = as.numeric(rownames(plot_matrix2)),
+  z = plot_matrix2) %>%
+  add_surface()%>%
+  layout(title="Value of Regime for Varying Cutoffs \n IPW",
+         scene=list(xaxis = list(title="Psi_1"),
+                    yaxis = list(title="Psi_3"),
+                    zaxis =  list(title="Y")))%>%
+         config(mathjax = 'cdn')
+
+
+
+
+# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+#             y=~Final_Data$y[Final_Data$groupy==1],
+#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout( xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title = TeX("\\psi_3")))%>%
+#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)%>%
+#          config(mathjax = 'cdn')
+```
+
+### Homoskedastic
+
+```{r}
+  Noise_Type="Homosk"
+  type_simul=2
+  covtype=3
+  prior=0
+  n=1000
+  Base_Noise="Homosk"
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
+# theta=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Homoskedastic/theta_",appendy))
+xhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Homoskedastic/xhist_",appendy))
+yhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Homoskedastic/yhist_",appendy))
+Final_Data=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Homoskedastic/Final_Data_",appendy))
+coly=c("GP","IPW")
+
+
+
+
+data_grid2=data.frame(theta1=Final_Data$x[Final_Data$groupy==1],
+                      theta2=Final_Data$y[Final_Data$groupy==1],
+                      value=Final_Data$z[Final_Data$groupy==1])
+plot_matrix2 <- t(acast(data_grid2, theta1~ theta2, value.var="value"))
+
+plot_ly(
+  x = as.numeric(colnames(plot_matrix2)),
+  y = as.numeric(rownames(plot_matrix2)),
+  z = plot_matrix2) %>%
+  add_surface()%>%
+  layout(title="Value of Regime for Varying Cutoffs \n IPW",
+         scene=list(xaxis = list(title="Psi_1"),
+                    yaxis = list(title="Psi_3"),
+                    zaxis =  list(title="Y")))%>%
+         config(mathjax = 'cdn')
+#--------------------------------------------------
+
+# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+#             y=~Final_Data$y[Final_Data$groupy==1],
+#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout(xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title = TeX("\\psi_3")))%>%
+#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)%>%
+#          config(mathjax = 'cdn')
+```
+
+### Heteroskedastic
+
+```{r}
+Noise_Type="Heterosk"
+type_simul=3
+covtype=3
+prior=0
+n=1000
+Base_Noise="Homosk"
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
+theta=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Heteroskedastic/theta_",appendy))
+xhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Heteroskedastic/xhist_",appendy))
+yhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Heteroskedastic/yhist_",appendy))
+Final_Data=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Heteroskedastic/Final_Data_",appendy))
+coly=c("GP","IPW")
+
+
+data_grid2=data.frame(theta1=Final_Data$x[Final_Data$groupy==1],
+                      theta2=Final_Data$y[Final_Data$groupy==1],
+                      value=Final_Data$z[Final_Data$groupy==1])
+plot_matrix2 <- t(acast(data_grid2, theta1~ theta2, value.var="value"))
+
+plot_ly(
+  x = as.numeric(colnames(plot_matrix2)),
+  y = as.numeric(rownames(plot_matrix2)),
+  z = plot_matrix2) %>%
+  add_surface()%>%
+  layout(title="Value of Regime for Varying Cutoffs \n IPW",
+         scene=list(xaxis = list(title=TeX("\\psi_1")),
+                    yaxis = list(title=TeX("\\psi_3")),
+                    zaxis =  list(title="Y")))%>%
+         config(mathjax = 'cdn')
+
+
+
+#--------------------------------------------------------
+# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+#             y=~Final_Data$y[Final_Data$groupy==1],
+#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout( xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title = TeX("\\psi_3")))%>%
+#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)%>%
+#          config(mathjax = 'cdn')
+
+```
+
+
+```{r,eval=FALSE,echo=FALSE}
+true_x=c(0.5,0.1)
+true_value=1
+#n1000
+# c(median(theta_grid[,1]),IQR(theta_grid[,1]),median(theta_grid[,2]),IQR(theta_grid[,2]),median(y_grid),IQR(y_grid))
+median_grid_1000=c("0.480 (0.17)","0.11 (0.13)","1.141 (0.13)")
+# c(mean(theta_grid[,1]),sd(theta_grid[,1]),mean(theta_grid[,2]),sd(theta_grid[,2]),mean(y_grid),sd(y_grid))
+mean_grid_1000=c("0.479 (0.13)","0.111 (0.100)", "1.143, (0.103)")
+
+# #n500
+# > c(median(theta_grid[,1]),IQR(theta_grid[,1]),median(theta_grid[,2]),IQR(theta_grid[,2]),median(y_grid),IQR(y_grid))
+median_grid_500=c("0.470 (0.22)","0.110 (0.15)","1.231 (0.19)")
+# > c(mean(theta_grid[,1]),sd(theta_grid[,1]),mean(theta_grid[,2]),sd(theta_grid[,2]),mean(y_grid),sd(y_grid))
+mean_grid_500=c("0.471 (0.15)", "0.103 (0.12)", "1.233  (0.15)")
+
+Tab_Grid_1000=rbind(median_grid_1000,median_grid_500)
+Tab_Grid_500=rbind(mean_grid_1000,mean_grid_500)
+kable(Tab_Grid_1000,caption=paste0("Grid search results for n=1000"))%>%kable_styling()
+kable(Tab_Grid_500,caption=paste0("Grid search results for n=500"))%>%kable_styling()
+
+xtable(Tab_Grid_1000,caption=paste0("Median (IQR) grid search results for n=1000"))
+xtable(Tab_Grid_500,caption=paste0(" Mean (sd) grid search results for n=500"))
+
+#----- Reading in data
+pathy="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/"
+TabyVal_mean=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/TabyVal_mean_n1000.csv"),row.names=1)
+Tabypsi1_mean=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/Tabypsi1_mean_n1000.csv"),row.names=1)
+Tabypsi2_mean=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/Tabypsi2_mean_n1000.csv"),row.names=1)
+
+TabyVal_median=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/TabyVal_median_n1000.csv"),row.names=1)
+Tabypsi1_median=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/Tabypsi1_median_n1000.csv"),row.names=1)
+Tabypsi2_median=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/Tabypsi2_median_n1000.csv"),row.names=1)
+
+
+xtable(Tabypsi1_median,caption=paste0("psi1 Median (IQR). Known value:",true_x[1]),digist=c(3))
+xtable(Tabypsi2_median,caption=paste0("psi2 Median (IQR). Known value:",true_x[2]),digits=c(3))
+xtable(TabyVal_median,caption=paste0("Value Median (IQR). Known value:",true_value),digits=c(3))
+
+xtable(Tabypsi1_mean,caption=paste0("psi1 Mean (sd). Known value:",true_x[1]),digits=c(3))
+xtable(Tabypsi2_mean,caption=paste0("psi2 Mean (sd). Known value:",true_x[2]),digis=c(3))
+xtable(TabyVal_mean,caption=paste0("Value Mean (sd). Known value:",true_value),digits=c(3))
+
+```
+
+
+
+```{r,fig.width = 10, fig.height = 5,eval=FALSE}
+#Boxplots
+true_x=c(0.5,0.1)
+true_value=1
+
+Valmat=read.csv(file="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/SimulationIII_TablesFigures/Valmat_n1000Base_NoiseHomosk.csv")
+
+p1=ggplot(Valmat, aes(y=psi1, x=Samp_numb, group=interaction(type_simul,Samp_numb), col=as.factor(type_simul))) +  
+  geom_boxplot(outlier.size = 0.5)+geom_point(position=position_dodge(width=0.75),size=0.5)+theme_bw()+
+  scale_color_manual(name  ="Type",labels=c("Interpolating", "Homoskedastic","Heteroskedastic"),values=c("gray4", "gray50","gray70"))+
+  geom_hline(yintercept=true_x[1], linetype="dashed")+
+  theme(text = element_text(size = 20))+
+  labs(x ="Number of Additional Points", y = "Estimate of Optimal Threshold")
+jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationIII_Figures/boxplotpsi1_n1000_covtype3_homosknoise.jpg", width = 1000, height = 500)
+p1
+dev.off()
+
+p2=ggplot(Valmat, aes(y=psi2, x=Samp_numb, group=interaction(type_simul,Samp_numb), col=as.factor(type_simul))) +  
+  geom_boxplot(outlier.size = 0.5)+geom_point(position=position_dodge(width=0.75),size=0.5)+theme_bw()+
+  scale_color_manual(name  ="Type",labels=c("Interpolating", "Homoskedastic","Heteroskedastic"),values=c("gray4", "gray50","gray70"))+
+  geom_hline(yintercept=true_x[2], linetype="dashed")+
+  theme(text = element_text(size = 20))+
+  labs(x ="Number of Additional Points", y = "Estimate of Optimal Threshold")
+jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationIII_Figures/boxplotpsi2_n1000_covtype3_homosknoise.jpg", width = 1000, height = 500)
+p2
+dev.off()
+
+
+p3=ggplot(Valmat, aes(y=Value, x=Samp_numb, group=interaction(type_simul,Samp_numb), col=as.factor(type_simul))) +  
+  geom_boxplot(outlier.size = 0.5)+geom_point(position=position_dodge(width=0.75),size=0.5)+theme_bw()+
+  scale_color_manual(name  ="Type",labels=c("Interpolating", "Homoskedastic","Heteroskedastic"),values=c("gray4", "gray50","gray70"))+
+  geom_hline(yintercept=true_value, linetype="dashed")+
+  theme(text = element_text(size = 20))+
+  labs(x ="Number of Additional Points", y = "Estimate of Optimal Threshold")
+jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationIII_Figures/boxplotvalue_n1000_covtype3_homosknoise.jpg", width = 1000, height = 500)
+p3
+dev.off()
+```
+
+
+## Matern 3/2 (n=1000)
+
+```{r}
+knitr::opts_chunk$set(echo = FALSE)
+library(gtools)
+library(xtable)
+library(ggplot2)
+library(plotly)#used for plotting
+library(kableExtra)
+library(reshape2)
+library(survey)
+library(knitr)
+pathy="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III"
+source(paste0(pathy,"/Common_Functions.R"))
+
+formula1="A1~-1+X12+X11"
+formula2="A2~-1+X22+X21+A1"
+formula3="A3~-1+X32+X31+A2"
+formula4="A4~-1+X42+X41+A3"
+# weight_estimate=TRUE
+normalized=TRUE
+bayes=FALSE
+covtype=1
+expit=function(x) 1 / (1 + exp(-x))
+
+```
+
+
+### Interpolating
+
+```{r}
+  Noise_Type="Interpol"
+  type_simul=1
+  covtype=1
+  prior=0
+  n=1000
+  Base_Noise="Homosk"
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
+# theta=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Interpolating/theta_",appendy))
+xhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Interpolating/xhist_",appendy))
+yhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Interpolating/yhist_",appendy))
+Final_Data=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Interpolating/Final_Data_",appendy))
+coly=c("GP","IPW")
+
+
+
+
+data_grid2=data.frame(theta1=Final_Data$x[Final_Data$groupy==1],
+                      theta2=Final_Data$y[Final_Data$groupy==1],
+                      value=Final_Data$z[Final_Data$groupy==1])
+plot_matrix2 <- t(acast(data_grid2, theta1~ theta2, value.var="value"))
+
+plot_ly(
+  x = as.numeric(colnames(plot_matrix2)),
+  y = as.numeric(rownames(plot_matrix2)),
+  z = plot_matrix2) %>%
+  add_surface()%>%
+  layout(title="Value of Regime for Varying Cutoffs \n IPW",
+         scene=list(xaxis = list(title="psi_1"),
+                    yaxis = list(title="psi_3"),
+                    zaxis =  list(title="Y")))
+#--------------------------------------------------
+# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+#             y=~Final_Data$y[Final_Data$groupy==1],
+#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout(xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title = TeX("\\psi_3")))%>%
+#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)%>%
+#          config(mathjax = 'cdn')
+```
+
+
+### Homoskedastic
+
+```{r}
+  Noise_Type="Homosk"
+  type_simul=2
+  covtype=1
+  prior=0
+  n=1000
+  Base_Noise="Homosk"
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
+# theta=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Homoskedastic/theta_",appendy))
+xhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Homoskedastic/xhist_",appendy))
+yhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Homoskedastic/yhist_",appendy))
+Final_Data=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Homoskedastic/Final_Data_",appendy))
+coly=c("GP","IPW")
+
+
+
+
+data_grid2=data.frame(theta1=Final_Data$x[Final_Data$groupy==1],
+                      theta2=Final_Data$y[Final_Data$groupy==1],
+                      value=Final_Data$z[Final_Data$groupy==1])
+plot_matrix2 <- t(acast(data_grid2, theta1~ theta2, value.var="value"))
+
+plot_ly(
+  x = as.numeric(colnames(plot_matrix2)),
+  y = as.numeric(rownames(plot_matrix2)),
+  z = plot_matrix2) %>%
+  add_surface()%>%
+  layout(title="Value of Regime for Varying Cutoffs \n IPW",
+         scene=list(xaxis = list(title="psi_1"),
+                    yaxis = list(title="psi_3"),
+                    zaxis =  list(title="Y")))
+#--------------------------------------------------
+# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+#             y=~Final_Data$y[Final_Data$groupy==1],
+#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout(xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title = TeX("\\psi_3")))%>%
+#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)%>%
+#          config(mathjax = 'cdn')
+```
+
+### Heteroskedastic
+
+```{r}
+Noise_Type="Heterosk"
+type_simul=3
+covtype=1
+prior=0
+n=1000
+Base_Noise="Homosk"
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
+# theta=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Heteroskedastic/theta_",appendy))
+xhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Heteroskedastic/xhist_",appendy))
+yhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Heteroskedastic/yhist_",appendy))
+Final_Data=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Heteroskedastic/Final_Data_",appendy))
+coly=c("GP","IPW")
+
+
+data_grid2=data.frame(theta1=Final_Data$x[Final_Data$groupy==1],
+                      theta2=Final_Data$y[Final_Data$groupy==1],
+                      value=Final_Data$z[Final_Data$groupy==1])
+plot_matrix2 <- t(acast(data_grid2, theta1~ theta2, value.var="value"))
+
+plot_ly(
+  x = as.numeric(colnames(plot_matrix2)),
+  y = as.numeric(rownames(plot_matrix2)),
+  z = plot_matrix2) %>%
+  add_surface()%>%
+  layout(title="Value of Regime for Varying Cutoffs \n IPW",
+         scene=list(xaxis = list(title="psi_1"),
+                    yaxis = list(title="psi_3"),
+                    zaxis =  list(title="Y")))%>%
+         config(mathjax = 'cdn')
+
+
+
+#--------------------------------------------------------
+# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+#             y=~Final_Data$y[Final_Data$groupy==1],
+#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout( xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title = TeX("\\psi_3")))%>%
+#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)%>%
+#          config(mathjax = 'cdn')
+
+```
+
+
+```{r,eval=FALSE,echo=FALSE}
+true_x=c(0.5,0.1)
+true_value=1
+
+#----- Reading in data
+pathy="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/"
+TabyVal_mean=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/TabyVal_mean_n1000_cov32.csv"),row.names=1)
+Tabypsi1_mean=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/Tabypsi1_mean_n1000_cov32.csv"),row.names=1)
+Tabypsi2_mean=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/Tabypsi2_mean_n1000_cov32.csv"),row.names=1)
+
+TabyVal_median=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/TabyVal_median_n1000_cov32.csv"),row.names=1)
+Tabypsi1_median=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/Tabypsi1_median_n1000_cov32.csv"),row.names=1)
+Tabypsi2_median=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/Tabypsi2_median_n1000_cov32.csv"),row.names=1)
+
+xtable(Tabypsi1_median,caption=paste0("psi1 Median (IQR). Known value:",true_x[1]),digits=c(3))
+xtable(Tabypsi2_median,caption=paste0("psi2 Median (IQR). Known value:",true_x[2]),digits=c(3))
+xtable(TabyVal_median,caption=paste0("Value Median (IQR). Known value:",true_value),digits=c(3))
+
+
+xtable(Tabypsi1_mean,caption=paste0("psi1 Mean (IQR). Known value:",true_x[1]),digits=c(3))
+xtable(Tabypsi2_mean,caption=paste0("psi2 Mean (IQR). Known value:",true_x[2]),digits=c(3))
+xtable(TabyVal_mean,caption=paste0("Value Mean (IQR). Known value:",true_value),digits=c(3))
+```
+
+
+
+```{r,fig.width = 10, fig.height = 5,echo=FALSE,eval=FALSE}
+#Boxplots
+true_x=c(0.5,0.1)
+true_value=1
+
+Valmat=read.csv(file="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/SimulationIII_TablesFigures/Valmat_n1000_cov32.csv")
+
+p1=ggplot(Valmat, aes(y=psi1, x=Samp_numb, group=interaction(type_simul,Samp_numb), col=as.factor(type_simul))) +  
+  geom_boxplot(outlier.size = 0.5)+geom_point(position=position_dodge(width=0.75),size=0.5)+theme_bw()+
+  scale_color_manual(name  ="Type",labels=c("Interpolating", "Homoskedastic","Heteroskedastic"),values=c("gray4", "gray50","gray70"))+
+  geom_hline(yintercept=true_x[1], linetype="dashed")+
+  theme(text = element_text(size = 20))+
+  labs(x ="Number of Additional Points", y = "Estimate of Optimal Threshold")
+jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationIII_Figures/boxplotpsi1_n1000_covtype1_homosknoise.jpg", width = 1000, height = 500)
+p1
+dev.off()
+
+p2=ggplot(Valmat, aes(y=psi2, x=Samp_numb, group=interaction(type_simul,Samp_numb), col=as.factor(type_simul))) +  
+  geom_boxplot(outlier.size = 0.5)+geom_point(position=position_dodge(width=0.75),size=0.5)+theme_bw()+
+  scale_color_manual(name  ="Type",labels=c("Interpolating", "Homoskedastic","Heteroskedastic"),values=c("gray4", "gray50","gray70"))+
+  geom_hline(yintercept=true_x[2], linetype="dashed")+
+  theme(text = element_text(size = 20))+
+  labs(x ="Number of Additional Points", y = "Estimate of Optimal Threshold")
+jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationIII_Figures/boxplotpsi2_n1000_covtype1_homosknoise.jpg", width = 1000, height = 500)
+p2
+dev.off()
+
+
+p3=ggplot(Valmat, aes(y=Value, x=Samp_numb, group=interaction(type_simul,Samp_numb), col=as.factor(type_simul))) +  
+  geom_boxplot(outlier.size = 0.5)+geom_point(position=position_dodge(width=0.75),size=0.5)+theme_bw()+
+  scale_color_manual(name  ="Type",labels=c("Interpolating", "Homoskedastic","Heteroskedastic"),values=c("gray4", "gray50","gray70"))+
+  geom_hline(yintercept=true_value, linetype="dashed")+
+  theme(text = element_text(size = 20))+
+  labs(x ="Number of Additional Points", y = "Estimate of Optimal Threshold")
+jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationIII_Figures/boxplotvalue_n1000_covtype1_homosknoise.jpg", width = 1000, height = 500)
+p3
+dev.off()
+```
+
+## Matern 5/2; Log-Normal Prior (n=1000)
+
+```{r}
+knitr::opts_chunk$set(echo = FALSE)
+library(gtools)
+library(xtable)
+library(ggplot2)
+library(plotly)#used for plotting
+library(kableExtra)
+library(reshape2)
+library(survey)
+library(knitr)
+pathy="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III"
+source(paste0(pathy,"/Common_Functions.R"))
+
+formula1="A1~-1+X12+X11"
+formula2="A2~-1+X22+X21+A1"
+formula3="A3~-1+X32+X31+A2"
+formula4="A4~-1+X42+X41+A3"
+# weight_estimate=TRUE
+normalized=TRUE
+bayes=FALSE
+covtype=1
+expit=function(x) 1 / (1 + exp(-x))
+
+```
+
+
+### Interpolating
+
+```{r}
+  Noise_Type="Interpol"
+  type_simul=1
+  covtype=3
+  prior=1
+  n=1000
+  Base_Noise="Homosk"
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
+# xhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Interpolating/xhist_",appendy))
+# yhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Interpolating/yhist_",appendy))
+Final_Data=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Interpolating/Final_Data_",appendy))
+coly=c("GP","IPW")
+
+data_grid2=data.frame(theta1=Final_Data$x[Final_Data$groupy==1],
+                      theta2=Final_Data$y[Final_Data$groupy==1],
+                      value=Final_Data$z[Final_Data$groupy==1])
+plot_matrix2 <- t(acast(data_grid2, theta1~ theta2, value.var="value"))
+
+plot_ly(
+  x = as.numeric(colnames(plot_matrix2)),
+  y = as.numeric(rownames(plot_matrix2)),
+  z = plot_matrix2) %>%
+  add_surface()%>%
+  layout(title="Value of Regime for Varying Cutoffs \n IPW",
+         scene=list(xaxis = list(title="psi_1"),
+                    yaxis = list(title="psi_3"),
+                    zaxis =  list(title="Y")))
+#--------------------------------------------------
+# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+#             y=~Final_Data$y[Final_Data$groupy==1],
+#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout(xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title = TeX("\\psi_3")))%>%
+#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)%>%
+#          config(mathjax = 'cdn')
+```
+
+
+### Homoskedastic
+
+```{r}
+  Noise_Type="Homosk"
+  type_simul=2
+  covtype=3
+  prior=1
+  n=1000
+  Base_Noise="Homosk"
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
+# xhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Homoskedastic/xhist_",appendy))
+# yhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Homoskedastic/yhist_",appendy))
+Final_Data=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Homoskedastic/Final_Data_",appendy))
+coly=c("GP","IPW")
+
+data_grid2=data.frame(theta1=Final_Data$x[Final_Data$groupy==1],
+                      theta2=Final_Data$y[Final_Data$groupy==1],
+                      value=Final_Data$z[Final_Data$groupy==1])
+plot_matrix2 <- t(acast(data_grid2, theta1~ theta2, value.var="value"))
+
+plot_ly(
+  x = as.numeric(colnames(plot_matrix2)),
+  y = as.numeric(rownames(plot_matrix2)),
+  z = plot_matrix2) %>%
+  add_surface()%>%
+  layout(title="Value of Regime for Varying Cutoffs \n IPW",
+         scene=list(xaxis = list(title="psi_1"),
+                    yaxis = list(title="psi_3"),
+                    zaxis =  list(title="Y")))
+#--------------------------------------------------
+# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+#             y=~Final_Data$y[Final_Data$groupy==1],
+#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout(xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title = TeX("\\psi_3")))%>%
+#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)%>%
+#          config(mathjax = 'cdn')
+```
+
+### Heteroskedastic
+
+```{r}
+Noise_Type="Heterosk"
+type_simul=3
+covtype=3
+prior=1
+n=1000
+Base_Noise="Homosk"
+
+ appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
+# xhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Heteroskedastic/xhist_",appendy))
+# yhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Heteroskedastic/yhist_",appendy))
+Final_Data=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Heteroskedastic/Final_Data_",appendy))
+coly=c("GP","IPW")
+
+
+data_grid2=data.frame(theta1=Final_Data$x[Final_Data$groupy==1],
+                      theta2=Final_Data$y[Final_Data$groupy==1],
+                      value=Final_Data$z[Final_Data$groupy==1])
+plot_matrix2 <- t(acast(data_grid2, theta1~ theta2, value.var="value"))
+
+plot_ly(
+  x = as.numeric(colnames(plot_matrix2)),
+  y = as.numeric(rownames(plot_matrix2)),
+  z = plot_matrix2) %>%
+  add_surface()%>%
+  layout(title="Value of Regime for Varying Cutoffs \n IPW",
+         scene=list(xaxis = list(title="psi_1"),
+                    yaxis = list(title="psi_3"),
+                    zaxis =  list(title="Y")))%>%
+         config(mathjax = 'cdn')
+
+
+
+#--------------------------------------------------------
+# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+#             y=~Final_Data$y[Final_Data$groupy==1],
+#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+# fig%>%colorbar(title = "Value")%>%
+#   layout( xaxis = list(title = TeX("\\psi_1")),
+#          yaxis = list(title = TeX("\\psi_3")))%>%
+#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)%>%
+#          config(mathjax = 'cdn')
+
+```
+
+
+```{r,eval=FALSE,echo=FALSE}
+true_x=c(0.5,0.1)
+true_value=1
+
+#----- Reading in data
+pathy="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/"
+TabyVal_mean=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/TabyVal_mean_n1000_prior.csv"),row.names=1)
+Tabypsi1_mean=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/Tabypsi1_mean_n1000_prior.csv"),row.names=1)
+Tabypsi2_mean=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/Tabypsi2_mean_n1000_prior.csv"),row.names=1)
+
+TabyVal_median=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/TabyVal_median_n1000_prior.csv"),row.names=1)
+Tabypsi1_median=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/Tabypsi1_median_n1000_prior.csv"),row.names=1)
+Tabypsi2_median=read.csv(file=paste0(pathy,"SimulationIII_TablesFigures/Tabypsi2_median_n1000_prior.csv"),row.names=1)
+
+xtable(Tabypsi1_median,caption=paste0("psi1 Median (IQR). Known value:",true_x[1]),digits=c(3))
+xtable(Tabypsi2_median,caption=paste0("psi2 Median (IQR). Known value:",true_x[2]),digits=c(3))
+xtable(TabyVal_median,caption=paste0("Value Median (IQR). Known value:",true_value),digits=c(3))
+
+
+xtable(Tabypsi1_mean,caption=paste0("psi1 Mean (IQR). Known value:",true_x[1]),digits=c(3))
+xtable(Tabypsi2_mean,caption=paste0("psi2 Mean (IQR). Known value:",true_x[2]),digits=c(3))
+xtable(TabyVal_mean,caption=paste0("Value Mean (IQR). Known value:",true_value),digits=c(3))
+```
+
+
+
+```{r,fig.width = 10, fig.height = 5,echo=FALSE,eval=FALSE}
+#Boxplots
+true_x=c(0.5,0.1)
+true_value=1
+
+Valmat=read.csv(file="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/SimulationIII_TablesFigures/Valmat_n1000_Prior.csv")
+
+p1=ggplot(Valmat, aes(y=psi1, x=Samp_numb, group=interaction(type_simul,Samp_numb), col=as.factor(type_simul))) +  
+  geom_boxplot(outlier.size = 0.5)+geom_point(position=position_dodge(width=0.75),size=0.5)+theme_bw()+
+  scale_color_manual(name  ="Type",labels=c("Interpolating", "Homoskedastic","Heteroskedastic"),values=c("gray4", "gray50","gray70"))+
+  geom_hline(yintercept=true_x[1], linetype="dashed")+
+  theme(text = element_text(size = 20))+
+  labs(x ="Number of Additional Points", y = "Estimate of Optimal Threshold")
+jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationIII_Figures/boxplotpsi1_n1000_covtype3_Prior_homosknoise.jpg", width = 1000, height = 500)
+p1
+dev.off()
+
+p2=ggplot(Valmat, aes(y=psi2, x=Samp_numb, group=interaction(type_simul,Samp_numb), col=as.factor(type_simul))) +  
+  geom_boxplot(outlier.size = 0.5)+geom_point(position=position_dodge(width=0.75),size=0.5)+theme_bw()+
+  scale_color_manual(name  ="Type",labels=c("Interpolating", "Homoskedastic","Heteroskedastic"),values=c("gray4", "gray50","gray70"))+
+  geom_hline(yintercept=true_x[2], linetype="dashed")+
+  theme(text = element_text(size = 20))+
+  labs(x ="Number of Additional Points", y = "Estimate of Optimal Threshold")
+jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationIII_Figures/boxplotpsi2_n1000_covtype3_Prior_homosknoise.jpg", width = 1000, height = 500)
+p2
+dev.off()
+
+
+p3=ggplot(Valmat, aes(y=Value, x=Samp_numb, group=interaction(type_simul,Samp_numb), col=as.factor(type_simul))) +  
+  geom_boxplot(outlier.size = 0.5)+geom_point(position=position_dodge(width=0.75),size=0.5)+theme_bw()+
+  scale_color_manual(name  ="Type",labels=c("Interpolating", "Homoskedastic","Heteroskedastic"),values=c("gray4", "gray50","gray70"))+
+  geom_hline(yintercept=true_value, linetype="dashed")+
+  theme(text = element_text(size = 20))+
+  labs(x ="Number of Additional Points", y = "Estimate of Optimal Threshold")
+jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationIII_Figures/boxplotvalue_n1000_covtype3_Prior_homosknoise.jpg", width = 1000, height = 500)
+p3
+dev.off()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

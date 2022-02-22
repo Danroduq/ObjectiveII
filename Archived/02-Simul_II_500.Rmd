@@ -1,15 +1,6 @@
---- 
-title: "Objective II"
-author: "Daniel Rodriguez Duque"
-site: bookdown::bookdown_site
----
+## Matern 5/2 (n=500)
 
-# Simulation II Main Paper
-
-
-
-
-```{r,include=FALSE}
+```{r setup, include=FALSE}
 library(gtools)
 library(xtable)
 library(ggplot2)
@@ -29,65 +20,6 @@ normalized=TRUE
 bayes=FALSE
 covtype=3
 ```
-
-## Value Function
-```{r, echo=FALSE}
-set.seed(1)
-fact=1.5
-#sequence of thresholds to be explored
-sequence1=seq(-1.5,1.2,.05)*fact
-sequence2=seq(-1.5,1.2,.05)*fact
-
-theta=as.matrix(expand.grid(sequence1,sequence2))
-
-expit=function(x) 1 / (1 + exp(-x))
-n=10000
-rand_comp=rnorm(n)
-Yp=rep(0,length(sequence))
-
-
-O1=rnorm(n,0,sd=1)
-A1_Opt=(O1-1*fact)>0+0
-epsilon2=rnorm(n,0,sd=1*fact)
-for (i in 1:dim(theta)[1] ){
-  A1=O1>theta[i,1]
-  O2=1*fact*A1+epsilon2
-  A2_Opt=(O2-.5*fact)>0
-  A2=O2>theta[i,2]
-  Yp[i]=mean(0.2*(O1 -(O1+1.5*fact)*(O1+1*fact)*(O1+0.2*fact)*(O1-1.2*fact)*(O1-.5*fact)*(A1_Opt-A1)-
-               (O2+1.4*fact)*(O2+1.1*fact)*(O2+0.2*fact)*(O2-1.4*fact)*(O2-0.9*fact)*(A2_Opt-A2)))
-}
-
-indy=which(Yp==max(Yp))
-
-data_grid2=data.frame(theta1=theta[,1],
-                      theta2=theta[,2],
-                      value=Yp)
-plot_matrix2 <- t(acast(data_grid2, theta1~ theta2, value.var="value"))
-
-plot_ly(
-  x = as.numeric(colnames(plot_matrix2)), 
-  y = as.numeric(rownames(plot_matrix2)), 
-  z = plot_matrix2) %>% 
-  add_surface()%>%
-  layout(title="Value of Regime for Varying Cutoffs \n IPW",
-         scene=list(xaxis = list(title="psi_2"),
-                    yaxis = list(title="psi_1"),
-                    zaxis =  list(title="Value")))
-# 
-# fig=plot_ly(x=~theta[,1],
-#             y=~theta[,2],
-#             z=~Yp, type="contour",
-#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-# fig%>%colorbar(title = "Value")%>%
-#   layout(xaxis = list(title =TeX("\\psi_1")),
-#          yaxis = list(title = TeX("\\psi_2"))) %>%
-#       config(mathjax = 'cdn')
-
-```
-
-
-## Matern 5/2 (n=500)
 
 
 ### Estimated Value Function
@@ -291,8 +223,8 @@ plot_ly(
 ```
 
 ```{r,eval=FALSE,echo=FALSE}
-true_x=c(1.8,-0.3)
-true_value=0.2414571
+  true_x=c(1.8,-0.3)
+  true_value=0.2414571
 #----- Reading in data
 pathy="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/"
 TabyVal_mean=read.csv(file=paste0(pathy,"SimulationII_TablesFigures/TabyVal_mean_n500.csv"),row.names=1)
@@ -313,4 +245,54 @@ xtable(Tabypsi2_mean,caption=paste0("psi2 Mean (IQR). Known value:",true_x[2]))
 xtable(TabyVal_mean,caption=paste0("Value Mean (IQR). Known value:",true_value))
 
 ```
+
+
+
+```{r,fig.width = 10, fig.height = 5,echo=FALSE,eval=FALSE}
+  true_x=c(1.8,-0.3)
+  true_value=0.2414571
+  
+  Valmat=read.csv(file="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/SimulationII_TablesFigures/Valmat_n500.csv")
+
+  keep=seq(1,25,2)
+  Valmat=Valmat[Valmat$Samp_numb %in% keep,]
+
+p1=ggplot(Valmat, aes(y=psi1, x=Samp_numb, group=interaction(type_simul,Samp_numb), col=as.factor(type_simul))) +  
+  geom_boxplot(width=1.4,outlier.size = 0.6)+geom_point(position=position_dodge(width=1.4),size=0.6)+theme_bw()+
+  scale_color_manual(name  ="Type",labels=c("Interpolating", "Homoskedastic","Heteroskedastic"),values=c("gray4", "gray50","gray70"))+
+  geom_hline(yintercept=true_x[1], linetype="dashed")+
+  theme(text = element_text(size = 20))+
+  labs(x ="Number of Additional Points", y = "Optimal Threshold")
+
+jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationII_Figures/boxplotpsi1_n500_covtype3_homonoise.jpg", width = 1000, height = 500)
+p1
+dev.off()
+
+p2=ggplot(Valmat, aes(y=psi2, x=Samp_numb, group=interaction(type_simul,Samp_numb), col=as.factor(type_simul))) +  
+  geom_boxplot(width=1.4,outlier.size = 0.5)+geom_point(position=position_dodge(width=1.4),size=0.5)+theme_bw()+
+  scale_color_manual(name  ="Type",labels=c("Interpolating", "Homoskedastic","Heteroskedastic"),values=c("gray4", "gray50","gray70"))+
+  geom_hline(yintercept=true_x[2], linetype="dashed")+
+  theme(text = element_text(size = 20))+
+  labs(x ="Number of Additional Points", y = "Optimal Threshold")
+jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationII_Figures/boxplotpsi2_n500_covtype3_homonoise.jpg", width = 1000, height = 500)
+p2
+dev.off()
+
+
+p3=ggplot(Valmat, aes(y=Value, x=Samp_numb, group=interaction(type_simul,Samp_numb), col=as.factor(type_simul))) +  
+  geom_boxplot(width=1.4,outlier.size = 0.5)+geom_point(position=position_dodge(width=1.4),size=0.5)+theme_bw()+
+  scale_color_manual(name  ="Type",labels=c("Interpolating", "Homoskedastic","Heteroskedastic"),values=c("gray4", "gray50","gray70"))+
+  geom_hline(yintercept=true_value, linetype="dashed")+
+  theme(text = element_text(size = 20))+
+  labs(x ="Number of Additional Points", y = "Value at Optimum")
+jpeg("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/SimulationII_Figures/boxplotvalue_n500_covtype3_homonoise.jpg", width = 1000, height = 500)
+p3
+dev.off()
+```
+
+
+
+
+
+
 

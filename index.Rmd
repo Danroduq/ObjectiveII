@@ -7,8 +7,6 @@ site: bookdown::bookdown_site
 # Simulation II Main Paper
 
 
-
-
 ```{r,include=FALSE}
 library(gtools)
 library(xtable)

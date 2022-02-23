@@ -1,6 +1,6 @@
 # Simulation III Appendix
 
-```{r}
+```{r,include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 
 library(gtools)

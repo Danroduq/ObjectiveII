@@ -83,7 +83,7 @@ plot_ly(
 
 ```
 
-### IPW Surface (n=500)
+## IPW-Surface (n=500)
 
 ```{r, echo=FALSE}
 set.seed(1)

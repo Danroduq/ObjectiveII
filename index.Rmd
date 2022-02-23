@@ -6,7 +6,6 @@ site: bookdown::bookdown_site
 
 # Simulation II Main Paper
 
-
 ```{r,include=FALSE}
 library(gtools)
 library(xtable)
@@ -84,11 +83,8 @@ plot_ly(
 
 ```
 
+### IPW Surface (n=500)
 
-## Matern 5/2 (n=500)
-
-
-### Estimated Value Function
 ```{r, echo=FALSE}
 set.seed(1)
 n=500
@@ -146,6 +142,7 @@ plot_ly(
 #          config(mathjax = 'cdn')
 ```
 
+## Matern 5/2 (n=500)
 
 ### Interpolating
 ```{r, echo=FALSE}

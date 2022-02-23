@@ -73,3 +73,5 @@ matern-52-covariance-log-normal-prior
 interpolating-gp-2
 homoskedastic-gp-2
 heteroskedastic-gp-1
+ipw-surface-n500
+ipw-surface-n500-1

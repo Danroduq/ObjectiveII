@@ -75,3 +75,4 @@ homoskedastic-gp-2
 heteroskedastic-gp-1
 ipw-surface-n500
 ipw-surface-n500-1
+normalized-ipw-surface

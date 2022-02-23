@@ -28,7 +28,7 @@ ACTG175_wide=ACTG175_wide%>%filter(arms%in%c(group1,group2))
 ACTG175_wide$z=(ACTG175_wide$arms==2)+0
 ```
 
-### Estimated Value Function Using Normalized IPW
+### Normalized IPW-Surface
 ```{r,echo=FALSE,fig.cap="Estimated value of regime using normalized IPW"}
 source("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/Common_Functions.R")
 sequence1=seq(50,100,5)
@@ -68,7 +68,7 @@ plot_ly(
 #   layout(xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
 #          yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))
 ```
-### value Surface using MSM
+### Value Surface using MSM
 
 ```{r,echo=FALSE,fig.cap="Estimated value surface of regime using quadratic MSM and scatter plot of normalized IPW estimates."}
 

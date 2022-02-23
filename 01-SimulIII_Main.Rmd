@@ -196,12 +196,12 @@ plot_ly(
 
 ### Interpolating
 ```{r}
-  Noise_Type="Interpol"
-  covtype=3
-  prior=0
-  n=500
-  type_simul=1
-  Base_Noise="Homosk"
+Noise_Type="Interpol"
+covtype=3
+prior=0
+n=500
+type_simul=1
+Base_Noise="Homosk"
 
 appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
 # theta=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation III/Interpolating/theta_",appendy))

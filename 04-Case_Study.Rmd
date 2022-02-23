@@ -13,6 +13,7 @@ library(labelled)
 
 data("ACTG175")
 ```
+
 # Case Study 
 
 ## Value Surface

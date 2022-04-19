@@ -11,6 +11,10 @@ library(survey)
 library(tableone)
 library(labelled)
 
+#setting environment variables for saving plot_ly objects
+Sys.setenv("plotly_username"="Danroduq")
+Sys.setenv("plotly_api_key"="nAT8biwfG1HEwBdY1c04")
+
 data("ACTG175")
 ```
 
@@ -191,10 +195,10 @@ plot_ly(
 ### Interpolating GP 
 
 ```{r,echo=FALSE,fig.cap="Estimated value of regime using interpolating GP after an additional 25 sampled points"}
-theta=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/theta_21TRUETRUE.csv")
-xhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/xhist_21TRUeTRUE.csv")
-yhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/yhist_21TRUETRUE.csv")
-Final_Data=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/Final_Data_21TRUETRUE.csv")
+theta=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/theta_21TRUETRUE_30.csv")
+xhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/xhist_21TRUETRUE_30.csv")
+yhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/yhist_21TRUETRUE_30.csv")
+Final_Data=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/Final_Data_21TRUETRUE_30.csv")
 
 
 data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
@@ -216,32 +220,32 @@ plot_ly(
 
 
 #Contour Plot
-# data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
-#                       weight=Final_Data$x[Final_Data$groupy==1],
-#                       cd4_baseline=Final_Data$y[Final_Data$groupy==1])
-# plot_matrix2 <- t(acast(data_grid2, weight~ cd4_baseline, value.var="cd4_20week"))
+data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
+                      weight=Final_Data$x[Final_Data$groupy==1],
+                      cd4_baseline=Final_Data$y[Final_Data$groupy==1])
+plot_matrix2 <- t(acast(data_grid2, weight~ cd4_baseline, value.var="cd4_20week"))
+fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+            y=~Final_Data$y[Final_Data$groupy==1],
+            z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+            colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+fig2=fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
+  layout(
+         xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
+         yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))%>%
+  add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+            type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
 
-# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
-#             y=~Final_Data$y[Final_Data$groupy==1],
-#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
-#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-# fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
-#   layout(
-#          xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
-#          yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))%>%
-#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
-#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
-
-
+plotly_IMAGE(fig2, width = 700, height = 500, format = "png", scale = 2,
+             out_file = "C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/Analysis_Figures/Contour_Interpolating_25.png")
 ```
 
 ### Homoskedastic GP
 
 ```{r, echo=FALSE,fig.cap="Estimated value of regime using homoskedastic GP after an additional 25 sampled points"}
-theta=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/theta_Homo_21TRUETRUE.csv")
-xhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/xhist_Homo_21TRUETRUE.csv")
-yhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/yhist_Homo_21TRUETRUE.csv")
-Final_Data=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/Final_Data_Homo_21TRUETRUE.csv")
+theta=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/theta_Homo_21TRUETRUE_30.csv")
+xhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/xhist_Homo_21TRUETRUE_30.csv")
+yhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/yhist_Homo_21TRUETRUE_30.csv")
+Final_Data=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/Final_Data_Homo_21TRUETRUE_30.csv")
 
 
 data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
@@ -264,21 +268,25 @@ plot_ly(
 
 
 #Contour Plot
-# data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
-#                       weight=Final_Data$x[Final_Data$groupy==1],
-#                       cd4_baseline=Final_Data$y[Final_Data$groupy==1])
-# plot_matrix2 <- t(acast(data_grid2, weight~ cd4_baseline, value.var="cd4_20week"))
+data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
+                      weight=Final_Data$x[Final_Data$groupy==1],
+                      cd4_baseline=Final_Data$y[Final_Data$groupy==1])
+plot_matrix2 <- t(acast(data_grid2, weight~ cd4_baseline, value.var="cd4_20week"))
+fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+            y=~Final_Data$y[Final_Data$groupy==1],
+            z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+            colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+
+fig2=fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
+  layout(xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
+         yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))%>%
+  add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+            type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+
+plotly_IMAGE(fig2, width = 700, height = 500, format = "png", scale = 2,
+             out_file = "C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/Analysis_Figures/Contour_Homoskedastic_25.png")
 
 
-# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
-#             y=~Final_Data$y[Final_Data$groupy==1],
-#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
-#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-# fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
-#   layout(xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
-#          yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))%>%
-#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
-#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
 
 ```
 
@@ -286,10 +294,10 @@ plot_ly(
 ### Heteroskedstic GP
 
 ```{r,echo=FALSE,fig.cap="Estimated value of regime using heteroskedastic GP after an additional 25 sampled points"}
-theta=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/theta_Hetero_21TRUETRUE.csv")
-xhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/xhist_Hetero_21TRUETRUE.csv")
-yhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/yhist_Hetero_21TRUETRUE.csv")
-Final_Data=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/Final_Data_Hetero_21TRUETRUE.csv")
+theta=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/theta_Hetero_21TRUETRUE_30.csv")
+xhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/xhist_Hetero_21TRUETRUE_30.csv")
+yhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/yhist_Hetero_21TRUETRUE_30.csv")
+Final_Data=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue/Final_Data_Hetero_21TRUETRUE_30.csv")
 
 
 data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
@@ -310,26 +318,30 @@ plot_ly(
   add_trace(x=Final_Data$x[Final_Data$groupy==2], y=Final_Data$y[Final_Data$groupy==2],                  z=Final_Data$z[Final_Data$groupy==2],type="scatter3d", mode="markers",marker = list(size = 2,opacity=0.8,color="darkblue",size=10))
 
 # Contour Plot
-# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
-#             y=~Final_Data$y[Final_Data$groupy==1],
-#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
-#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-# fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
-#   layout(
-#          xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
-#          yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))%>%
-#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
-#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+            y=~Final_Data$y[Final_Data$groupy==1],
+            z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+            colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+fig2=fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
+  layout(
+         xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
+         yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))%>%
+  add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+            type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+
+
+plotly_IMAGE(fig2, width = 700, height = 500, format = "png", scale = 2,
+             out_file = "C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/Analysis_Figures/Contour_Heteroskedastic_25.png")
 ```
 
 ## Matern 3/2 GP Graphics
 
 ### Interpolating GP
 ```{r,echo=FALSE,fig.cap="Estimated value of regime using interpolating GP after an additional 25 sampled points"}
-theta=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/theta_21TRUETRUE_1.csv")
-xhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/xhist_21TRUETRUE_1.csv")
-yhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/yhist_21TRUETRUE_1.csv")
-Final_Data=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/Final_Data_21TRUETRUE_1.csv")
+theta=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/theta_21TRUETRUE_10.csv")
+xhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/xhist_21TRUETRUE_10.csv")
+yhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/yhist_21TRUETRUE_10.csv")
+Final_Data=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/Final_Data_21TRUETRUE_10.csv")
 
 
 data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
@@ -351,29 +363,32 @@ plot_ly(
 
 
 #Contour Plot
-# data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
-#                       weight=Final_Data$x[Final_Data$groupy==1],
-#                       cd4_baseline=Final_Data$y[Final_Data$groupy==1])
-# plot_matrix2 <- t(acast(data_grid2, weight~ cd4_baseline, value.var="cd4_20week"))
-# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
-#             y=~Final_Data$y[Final_Data$groupy==1],
-#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
-#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-# fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
-#   layout(
-#          xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
-#          yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))%>%
-#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
-#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
+                      weight=Final_Data$x[Final_Data$groupy==1],
+                      cd4_baseline=Final_Data$y[Final_Data$groupy==1])
+plot_matrix2 <- t(acast(data_grid2, weight~ cd4_baseline, value.var="cd4_20week"))
+fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+            y=~Final_Data$y[Final_Data$groupy==1],
+            z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+            colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+fig2=fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
+  layout(
+         xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
+         yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))%>%
+  add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+            type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+
+plotly_IMAGE(fig2, width = 700, height = 500, format = "png", scale = 2,
+             out_file = "C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/Analysis_Figures/Contour_Interpolating_25_cov32.png")
 ```
 
 ### Homoskedastic GP
 
 ```{r, echo=FALSE,fig.cap="Estimated value of regime using homoskedastic GP after an additional 25 sampled points"}
-theta=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/theta_Homo_21TRUETRUE_1.csv")
-xhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/xhist_Homo_21TRUETRUE_1.csv")
-yhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/yhist_Homo_21TRUETRUE_1.csv")
-Final_Data=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/Final_Data_Homo_21TRUETRUE_1.csv")
+theta=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/theta_Homo_21TRUETRUE_10.csv")
+xhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/xhist_Homo_21TRUETRUE_10.csv")
+yhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/yhist_Homo_21TRUETRUE_10.csv")
+Final_Data=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/Final_Data_Homo_21TRUETRUE_10.csv")
 
 
 data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
@@ -396,19 +411,22 @@ plot_ly(
 
 
 #Contour Plot
-# data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
-#                       weight=Final_Data$x[Final_Data$groupy==1],
-#                       cd4_baseline=Final_Data$y[Final_Data$groupy==1])
-# plot_matrix2 <- t(acast(data_grid2, weight~ cd4_baseline, value.var="cd4_20week"))
-# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
-#             y=~Final_Data$y[Final_Data$groupy==1],
-#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
-#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-# fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
-#   layout(xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
-#          yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))%>%
-#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
-#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
+                      weight=Final_Data$x[Final_Data$groupy==1],
+                      cd4_baseline=Final_Data$y[Final_Data$groupy==1])
+plot_matrix2 <- t(acast(data_grid2, weight~ cd4_baseline, value.var="cd4_20week"))
+fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+            y=~Final_Data$y[Final_Data$groupy==1],
+            z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+            colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+fig2=fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
+  layout(xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
+         yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))%>%
+  add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+            type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+
+plotly_IMAGE(fig2, width = 700, height = 500, format = "png", scale = 2,
+             out_file = "C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/Analysis_Figures/Contour_Homoskedastic_25_cov32.png")
 
 ```
 
@@ -416,10 +434,10 @@ plot_ly(
 ### Heteroskedastic GP 
 
 ```{r, echo=FALSE,fig.cap="Estimated value of regime using homoskedastic GP after an additional 25 sampled points"}
-theta=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/theta_Hetero_21TRUETRUE_1.csv")
-xhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/xhist_Hetero_21TRUETRUE_1.csv")
-yhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/yhist_Hetero_21TRUETRUE_1.csv")
-Final_Data=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/Final_Data_Hetero_21TRUETRUE_1.csv")
+theta=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/theta_Hetero_21TRUETRUE_10.csv")
+xhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/xhist_Hetero_21TRUETRUE_10.csv")
+yhist=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/yhist_Hetero_21TRUETRUE_10.csv")
+Final_Data=read.csv("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Analysis/21_WeightTrue_cov32/Final_Data_Hetero_21TRUETRUE_10.csv")
 
 
 data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
@@ -441,20 +459,23 @@ plot_ly(
 
 
 #Contour Plot
-# data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
-#                       weight=Final_Data$x[Final_Data$groupy==1],
-#                       cd4_baseline=Final_Data$y[Final_Data$groupy==1])
-# plot_matrix2 <- t(acast(data_grid2, weight~ cd4_baseline, value.var="cd4_20week"))
-# fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
-#             y=~Final_Data$y[Final_Data$groupy==1],
-#             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
-#             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-# fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
-#   layout(xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
-#          yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))%>%
-#   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
-#             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+data_grid2=data.frame(cd4_20week=Final_Data$z[Final_Data$groupy==1],
+                      weight=Final_Data$x[Final_Data$groupy==1],
+                      cd4_baseline=Final_Data$y[Final_Data$groupy==1])
+plot_matrix2 <- t(acast(data_grid2, weight~ cd4_baseline, value.var="cd4_20week"))
+fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
+            y=~Final_Data$y[Final_Data$groupy==1],
+            z=~Final_Data$z[Final_Data$groupy==1], type="contour",
+            colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
+fig2=fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
+  layout(xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
+         yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))%>%
+  add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
+            type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
 
+
+plotly_IMAGE(fig2, width = 700, height = 500, format = "png", scale = 2,
+             out_file = "C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/Analysis_Figures/Contour_Heteroskedastic_25_cov32.png")
 ```
 
 ## Matern 5/2 Covariance; Log Normal Prior
@@ -495,12 +516,15 @@ fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
             y=~Final_Data$y[Final_Data$groupy==1],
             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
+fig2=fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
   layout(
          xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
          yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))%>%
   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+
+plotly_IMAGE(fig2, width = 700, height = 500, format = "png", scale = 2,
+             out_file = "C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/Analysis_Figures/Contour_Interpolating_25_Prior.png")
 ```
 
 ### Homoskedastic GP
@@ -540,11 +564,14 @@ fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
             y=~Final_Data$y[Final_Data$groupy==1],
             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
+fig2=fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
   layout(xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
          yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))%>%
   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+
+plotly_IMAGE(fig2, width = 700, height = 500, format = "png", scale = 2,
+             out_file = "C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/Analysis_Figures/Contour_Homoskedastic_25_Prior.png")
 
 ```
 
@@ -587,11 +614,14 @@ fig=plot_ly(x=~Final_Data$x[Final_Data$groupy==1],
             y=~Final_Data$y[Final_Data$groupy==1],
             z=~Final_Data$z[Final_Data$groupy==1], type="contour",
             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
-fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
+fig2=fig%>%colorbar(title = "20 Week \n CD4",titlefont=list(size=25),tickfont=list(size=15))%>%
   layout(xaxis = list(title = "Baseline Weight (kg)",titlefont=list(size=25),tickfont=list(size=15)),
          yaxis = list(title = "Baseline CD4",titlefont=list(size=25),tickfont=list(size=15)))%>%
   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+
+plotly_IMAGE(fig2, width = 700, height = 500, format = "png", scale = 2,
+             out_file = "C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Manuscript/Analysis_Figures/Contour_Heteroskedastic_25_Prior.png")
 
 ```
 

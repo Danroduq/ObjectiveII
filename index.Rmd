@@ -151,8 +151,10 @@ covtype=3
 prior=0
 n=500
 type_simul=1
+Base_Noise="Homosk"
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,".csv")
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Interpolating"
 theta=read.csv(paste0(pre,"/theta_",appendy))
 xhist=read.csv(paste0(pre,"/xhist_",appendy))
@@ -197,8 +199,9 @@ type_simul=2
 covtype=3
 prior=0
 n=500
+Base_Noise="Homosk"
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,".csv")
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Homoskedastic"
 
 theta=read.csv(paste0(pre,"/theta_",appendy))
@@ -245,8 +248,10 @@ type_simul=3
 covtype=3
 prior=0
 n=500
+Base_Noise="Homosk"
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,".csv")
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Heteroskedastic"
 
 theta=read.csv(paste0(pre,"/theta_",appendy))

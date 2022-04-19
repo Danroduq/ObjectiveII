@@ -98,8 +98,10 @@ covtype=3
 prior=0
 n=1000
 type_simul=1
+Base_Noise="Homosk"
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,".csv")
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
 theta=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Interpolating/theta_",appendy))
 xhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Interpolating/xhist_",appendy))
 yhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Interpolating/yhist_",appendy))
@@ -145,8 +147,10 @@ type_simul=2
 covtype=3
 prior=0
 n=1000
+Base_Noise="Homosk"
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,".csv")
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
 # theta=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Homoskedastic/theta_",appendy))
 # xhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Homoskedastic/xhist_",appendy))
 # yhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Homoskedastic/yhist_",appendy))
@@ -176,10 +180,12 @@ plot_ly(
 #             colorscale="Greys",line=list(color="black"), contours = list(showlabels = TRUE))
 # fig%>%colorbar(title = "Value")%>%
 #   layout(xaxis = list(title = TeX("\\psi_1")),
-#          yaxis = list(title =TeX("\\psi_2"))) %>% 
-#          config(mathjax = 'cdn') %>% 
+#          yaxis = list(title =TeX("\\psi_2"))) %>%
+#          config(mathjax = 'cdn') %>%
 #   add_trace(x=~Final_Data$x[Final_Data$groupy==2],y=~Final_Data$y[Final_Data$groupy==2],
 #             type = "scatter", mode="markers", marker=list(color="grey"),inherit=FALSE)
+
+
 ```
 
 ### Heteroskedastic
@@ -190,8 +196,10 @@ type_simul=3
 covtype=3
 prior=0
 n=1000
+Base_Noise="Homosk"
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,".csv")
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
 # theta=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Heteroskedastic/theta_",appendy))
 # xhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Heteroskedastic/xhist_",appendy))
 # yhist=read.csv(paste0("C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Heteroskedastic/yhist_",appendy))
@@ -643,8 +651,10 @@ covtype=1
 prior=0
 n=1000
 type_simul=1
+Base_Noise="Homosk"
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_NoiseHomosk.csv")
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Interpolating"
 theta=read.csv(paste0(pre,"/theta_",appendy))
 xhist=read.csv(paste0(pre,"/xhist_",appendy))
@@ -690,8 +700,10 @@ type_simul=2
 covtype=1
 prior=0
 n=1000
+Base_Noise="Homosk"
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_NoiseHomosk.csv")
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Homoskedastic"
 
 theta=read.csv(paste0(pre,"/theta_",appendy))
@@ -738,8 +750,9 @@ type_simul=3
 covtype=1
 prior=0
 n=1000
+Base_Noise="Homosk"
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_NoiseHomosk.csv")
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Heteroskedastic"
 
 theta=read.csv(paste0(pre,"/theta_",appendy))
@@ -879,8 +892,10 @@ covtype=3
 prior=1
 n=1000
 type_simul=1
+Base_Noise="Homosk"
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_NoiseHomosk.csv")
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Interpolating"
 theta=read.csv(paste0(pre,"/theta_",appendy))
 xhist=read.csv(paste0(pre,"/xhist_",appendy))
@@ -925,8 +940,10 @@ type_simul=2
 covtype=3
 prior=1
 n=1000
+Base_Noise="Homosk"
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_NoiseHomosk.csv")
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Homoskedastic"
 
 theta=read.csv(paste0(pre,"/theta_",appendy))
@@ -973,8 +990,10 @@ type_simul=3
 covtype=3
 prior=1
 n=1000
+Base_Noise="Homosk"
 
-appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_NoiseHomosk.csv")
+
+appendy=paste0(Noise_Type,"_covtype",covtype,"_prior",prior,"_n",n,"_type_simul",type_simul,"_Base_Noise",Base_Noise,".csv")
 pre="C:/Users/Administrator/Dropbox/Daniel_PhD_Research/Objective II/Code/ComputerExperiments/Simulation II/Heteroskedastic"
 
 theta=read.csv(paste0(pre,"/theta_",appendy))
